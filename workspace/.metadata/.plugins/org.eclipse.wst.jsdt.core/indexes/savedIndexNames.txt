@@ -1,0 +1,6 @@
+INDEX VERSION 1.4+C:\dev\java\Projet JEE Aout\workspace\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
+534446930.index
+3245660729.index
+2957015532.index
+2252520426.index
+3361782636.index
