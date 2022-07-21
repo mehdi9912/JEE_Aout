@@ -42,3 +42,12 @@
 2022-07-21 15:03:29,839 [Worker-3: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory C:\dev\java\Projet JEE Aout\workspace\JEE_Client\src\main\resources
 2022-07-21 15:03:29,842 [Worker-3: Building] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (Cp1252 actually) to copy filtered resources, i.e. build is platform dependent!
 2022-07-21 15:03:29,845 [Worker-3: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory C:\dev\java\Projet JEE Aout\workspace\JEE_Client\src\test\resources
+2022-07-21 15:17:37,129 [Worker-1: Loading available Gradle versions] INFO  o.e.b.c.i.u.g.PublishedGradleVersions - Gradle version information cache is up-to-date. Trying to read.
+2022-07-21 15:23:10,446 [Worker-14: Building] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (Cp1252 actually) to copy filtered resources, i.e. build is platform dependent!
+2022-07-21 15:23:10,451 [Worker-14: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory C:\Users\mehdi\OneDrive - HEPH-Condorcet\Documents\GitHub\JEE_Aout\workspace\JEE_API\src\main\resources
+2022-07-21 15:23:10,463 [Worker-14: Building] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (Cp1252 actually) to copy filtered resources, i.e. build is platform dependent!
+2022-07-21 15:23:10,467 [Worker-14: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory C:\Users\mehdi\OneDrive - HEPH-Condorcet\Documents\GitHub\JEE_Aout\workspace\JEE_API\src\test\resources
+2022-07-21 15:23:16,781 [Worker-14: Building] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (Cp1252 actually) to copy filtered resources, i.e. build is platform dependent!
+2022-07-21 15:23:16,788 [Worker-14: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory C:\Users\mehdi\OneDrive - HEPH-Condorcet\Documents\GitHub\JEE_Aout\workspace\JEE_Client\src\main\resources
+2022-07-21 15:23:16,792 [Worker-14: Building] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (Cp1252 actually) to copy filtered resources, i.e. build is platform dependent!
+2022-07-21 15:23:16,795 [Worker-14: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory C:\Users\mehdi\OneDrive - HEPH-Condorcet\Documents\GitHub\JEE_Aout\workspace\JEE_Client\src\test\resources
