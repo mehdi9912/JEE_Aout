@@ -1,13 +1,10 @@
 package be.project.api;
 
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-@ApplicationPath("/api")
-public class API extends Application{
+public class API{
 
 	public API() {
 		// TODO Auto-generated constructor stub

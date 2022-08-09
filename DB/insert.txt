@@ -1,0 +1,68 @@
+INSERT INTO police_area(name) values('Charleroi');
+INSERT INTO police_area(name) values('Mons');
+insert into chief (chief_firstname, chief_lastname, password, police_area_id) values ('John' , 'Doe', 'test' , 1);
+insert into chief (chief_firstname, chief_lastname, password, police_area_id) values ('Alex' , 'Tendre', 'test' , 1);
+insert into collector (collector_firstname, collector_lastname, password, police_area_id) values ('Sarah' , 'Croche', 'test' , 1);
+insert into policeman (policeman_firstname, policeman_lastname, password, chief_serialnumber, police_area_id) values ('Tony' , 'Jadoulle2', 'test' ,'CH000001', 1);
+
+insert into vehicule_type (type) values('Autobus');
+insert into vehicule_type (type) values('Moto');
+insert into vehicule_type (type) values('Tracteur');
+insert into vehicule_type (type) values('Voiture');
+insert into vehicule_type (type) values('Camion');
+
+insert into infraction (infraction_type, amount) values ('Non-usage des clignotants' , 125.00);
+insert into infraction (infraction_type, amount) values ('Non-port de la ceinture de securite' , 80.50);
+insert into infraction (infraction_type, amount) values ('Telephone au volant' , 135.99);
+insert into infraction (infraction_type, amount) values ('Priorite de droite' , 95.00);
+insert into infraction (infraction_type, amount) values ('Griller un feu rouge' , 200.20);
+insert into infraction (infraction_type, amount) values ('Pas d assurance' , 125.00);
+
+insert into insurance values ('1-AAA-123','0');
+
+DECLARE
+    pwd admin.password%TYPE;
+BEGIN
+    hash_password('password', pwd);
+    insert into admin(serialNumber, firstname, lastname, password) values ('AD800000','Mehdi' , 'Moussaoui', pwd);
+    insert into chief(chief_firstname, chief_lastname, password, police_area_id) values ('John','Doe' ,  pwd , 1);
+    insert into chief (chief_firstname, chief_lastname, password, police_area_id) values ('Alex' , 'Tendre', pwd, 1);
+    insert into collector (collector_firstname, collector_lastname, password, police_area_id) values ('Sarah' , 'Croche', pwd , 1);
+    insert into policeman (policeman_firstname, policeman_lastname, password, chief_serialnumber, police_area_id) values ('Tony' , 'Jadoulle', pwd ,'CH000001', 1);
+    dbms_output.put_line(pwd);
+END;
+/
+
+commit;
+
+
+select * from fine where policeman_serialnumber in(select policeman_serialnumber from policeman where chief_serialnumber='CH000001');
+
+SELECT p.policeman_serialNumber, p.policeman_firstname, p.policeman_lastname, p.police_area_id, po.name, c.chief_serialNumber, c.chief_lastname, c.chief_firstname from policeman p, police_area po, chief c where p.police_area_id = po.id and p.chief_serialNumber = c.chief_serialNumber and p.policeman_serialNumber='PO000001';
+
+SELECT policeman_serialnumber, policeman_firstname, policeman_lastname, 
+
+
+CREATE OR REPLACE PROCEDURE hash_password(
+	password IN admin.password%TYPE,
+	hash_password IN OUT admin.password%TYPE
+	)
+AS
+BEGIN
+	select standard_hash(password, 'MD5') returning into hash_password from dual;
+	COMMIT;
+	EXCEPTION 
+		WHEN OTHERS THEN 
+			DBMS_OUTPUT.PUT_lINE('Error while hasing password');	
+	
+END;
+/
+
+DECLARE
+    pwd admin.password%TYPE;
+BEGIN
+    hash_password('test', pwd);
+    dbms_output.put_line(pwd);
+END;
+
+

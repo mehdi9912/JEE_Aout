@@ -1,0 +1,474 @@
+CREATE OR REPLACE PROCEDURE hash_password(
+	password IN admin.password%TYPE,
+	hash_password IN OUT admin.password%TYPE
+	)
+AS
+BEGIN
+	select standard_hash(password, 'MD5') returning into hash_password from dual;
+	COMMIT;
+	EXCEPTION 
+		WHEN OTHERS THEN 
+			DBMS_OUTPUT.PUT_lINE('Error while hasing password');	
+	
+END;
+/
+
+DECLARE
+    test NUMBER;
+BEGIN
+    update_collector('CO000006', 'modifhash', 'modifhash', 'test', 1, test);
+    dbms_output.put_line(test);
+END;
+
+
+
+CREATE OR REPLACE PROCEDURE update_collector(
+	serialNumber IN collector.collector_serialNumber%TYPE,
+	firstname IN collector.collector_firstname%TYPE,
+	lastname IN collector.collector_lastname%TYPE,
+	pwd IN collector.password%TYPE,
+	policeAreaId IN collector.police_area_id%TYPE,
+	forException OUT collector.police_area_id%TYPE 
+	)
+AS
+	pwd_hashed collector.password%TYPE; 	
+BEGIN
+	forException := 0;
+
+	IF pwd is NULL THEN
+		UPDATE collector SET
+		collector_firstname=firstname,
+		collector_lastname=lastname,
+		police_area_id=policeAreaId
+		WHERE collector_serialNumber = serialNumber;
+	ELSE
+		hash_password(pwd,pwd_hashed);
+		UPDATE collector SET
+		collector_firstname=firstname,
+		collector_lastname=lastname,
+		password=pwd_hashed,
+		police_area_id=policeAreaId
+		WHERE collector_serialNumber = serialNumber;
+	END IF;
+	COMMIT;
+	EXCEPTION 
+		WHEN OTHERS THEN 
+			DBMS_OUTPUT.PUT_lINE('Error while updating collector');
+			forException := SQLCODE;
+END;
+
+CREATE OR REPLACE PROCEDURE update_chief(
+	serialNumber IN chief.chief_serialNumber%TYPE,
+	firstname IN chief.chief_firstname%TYPE,
+	lastname IN chief.chief_lastname%TYPE,
+	pwd IN chief.password%TYPE,
+	policeAreaId IN chief.police_area_id%TYPE,
+	forException OUT chief.police_area_id%TYPE 
+	)
+AS	
+	pwd_hashed chief.password%TYPE; 	
+BEGIN
+	forException := 0;
+
+	IF pwd IS NULL THEN
+		UPDATE chief SET
+		chief_firstname=firstname,
+		chief_lastname=lastname,
+		police_area_id=policeAreaId
+		WHERE chief_serialNumber = serialNumber;
+	ELSE
+		hash_password(pwd,pwd_hashed);
+		UPDATE chief SET
+		chief_firstname=firstname,
+		chief_lastname=lastname,
+		password=pwd_hashed,
+		police_area_id=policeAreaId
+		WHERE chief_serialNumber = serialNumber;
+	END IF;
+	COMMIT;
+	EXCEPTION 
+		WHEN OTHERS THEN 
+			DBMS_OUTPUT.PUT_lINE('Error while updating chief');
+			forException := SQLCODE;
+END;
+
+CREATE OR REPLACE PROCEDURE update_policeman(
+	serialNumber IN policeman.policeman_serialNumber%TYPE,
+	firstname IN policeman.policeman_firstname%TYPE,
+	lastname IN policeman.policeman_lastname%TYPE,
+	pwd IN policeman.password%TYPE,
+	policeAreaId IN policeman.police_area_id%TYPE,
+	chiefSerialNumber IN policeman.chief_serialnumber%TYPE,
+	forException OUT policeman.police_area_id%TYPE 
+	)
+AS	
+	pwd_hashed policeman.password%TYPE;
+BEGIN
+	forException := 0;
+
+	IF pwd is NULL THEN
+		UPDATE policeman SET
+		policeman_firstname=firstname,
+		policeman_lastname=lastname,
+		police_area_id=policeAreaId,
+		chief_serialnumber=chiefSerialNumber
+		WHERE policeman_serialNumber = serialNumber;
+	ELSE
+		hash_password(pwd,pwd_hashed);
+		UPDATE policeman SET
+		policeman_firstname=firstname,
+		policeman_lastname=lastname,
+		password=pwd_hashed,
+		police_area_id=policeAreaId,
+		chief_serialnumber=chiefSerialNumber
+		WHERE policeman_serialNumber = serialNumber;
+	END IF;
+	COMMIT;
+	EXCEPTION 
+		WHEN OTHERS THEN 
+			DBMS_OUTPUT.PUT_lINE('Error while updating policeman');
+			forException := SQLCODE;
+END;
+
+CREATE OR REPLACE PROCEDURE delete_collector(
+	serialNumber IN collector.collector_serialNumber%TYPE,
+	success OUT NUMBER
+	)
+AS	
+BEGIN
+	success  := 1;
+
+	DELETE from collector WHERE
+	collector_serialNumber=serialNumber;
+	COMMIT;
+	EXCEPTION 
+		WHEN OTHERS THEN 
+			DBMS_OUTPUT.PUT_lINE('Error while deletecollector');
+			success  := 0;
+END;
+
+CREATE OR REPLACE PROCEDURE delete_chief(
+	serialNumber IN chief.chief_serialNumber%TYPE,
+	success OUT NUMBER
+	)
+AS	
+BEGIN
+	success  := 1;
+
+	DELETE from chief WHERE
+	chief_serialNumber=serialNumber;
+	COMMIT;
+	EXCEPTION 
+		WHEN OTHERS THEN 
+			DBMS_OUTPUT.PUT_lINE('Error while deletechief');
+			success  := 0;
+END;
+/
+
+CREATE OR REPLACE PROCEDURE delete_policeman(
+	serialNumber IN policeman.policeman_serialNumber%TYPE,
+	success OUT NUMBER
+	)
+AS	
+BEGIN
+	success  := 1;
+
+	DELETE from policeman WHERE
+	policeman_serialNumber=serialNumber;
+	COMMIT;
+	EXCEPTION 
+		WHEN OTHERS THEN 
+			DBMS_OUTPUT.PUT_lINE('Error while deletepoliceman');
+			success  := 0;
+END;
+/
+
+
+DECLARE
+    test VARCHAR2(50);
+BEGIN
+    insert_collector('inserthash', 'inserthash', 'testing', 1, test);
+    dbms_output.put_line(test);
+END;
+
+CREATE OR REPLACE PROCEDURE insert_collector(
+	firstname IN collector.collector_firstname%TYPE,
+	lastname IN collector.collector_lastname%TYPE,
+	pwd IN collector.password%TYPE,
+	policeAreaId IN collector.police_area_id%TYPE,
+	serial_number_created OUT collector.collector_serialNumber%TYPE 
+	)
+AS
+	pwd_hashed collector.password%TYPE;
+BEGIN
+	hash_password(pwd,pwd_hashed);
+	INSERT INTO collector(collector_firstname,collector_lastname, password ,police_area_id) 
+	VALUES (firstname ,lastname ,pwd_hashed ,policeAreaId) 
+	RETURNING collector_serialNumber INTO serial_number_created;
+	COMMIT;
+	EXCEPTION 
+		WHEN OTHERS THEN 
+			DBMS_OUTPUT.PUT_lINE('Error while creating a new collector');	
+	
+END;
+/
+
+
+CREATE OR REPLACE PROCEDURE insert_chief(
+	firstname IN chief.chief_firstname%TYPE,
+	lastname IN chief.chief_lastname%TYPE,
+	pwd IN chief.password%TYPE,
+	policeAreaId IN chief.police_area_id%TYPE,
+	serial_number_created OUT chief.chief_serialNumber%TYPE 
+	)
+AS
+	pwd_hashed chief.password%TYPE;
+BEGIN
+	hash_password(pwd,pwd_hashed);
+	INSERT INTO chief(chief_firstname,chief_lastname, password ,police_area_id) 
+	VALUES (firstname ,lastname ,pwd_hashed ,policeAreaId) 
+	RETURNING chief_serialNumber INTO serial_number_created;
+	COMMIT;
+	EXCEPTION 
+		WHEN OTHERS THEN 
+			DBMS_OUTPUT.PUT_lINE('Error while creating a new chief');	
+	
+END;
+/
+
+
+CREATE OR REPLACE PROCEDURE insert_policeman(
+	firstname IN policeman.policeman_firstname%TYPE,
+	lastname IN policeman.policeman_lastname%TYPE,
+	pwd IN policeman.password%TYPE,
+	policeAreaId IN policeman.police_area_id%TYPE,
+	chiefSerialNumber in policeman.chief_serialnumber%type,
+	serial_number_created OUT policeman.policeman_serialNumber%TYPE 
+	)
+AS
+	pwd_hashed policeman.password%TYPE;
+BEGIN
+	hash_password(pwd,pwd_hashed);
+	INSERT INTO policeman(policeman_firstname,policeman_lastname, password ,police_area_id, chief_serialnumber) 
+	VALUES (firstname ,lastname ,pwd_hashed ,policeAreaId, chiefSerialNumber) 
+	RETURNING policeman_serialNumber INTO serial_number_created;
+	COMMIT;
+	EXCEPTION 
+		WHEN OTHERS THEN 
+			DBMS_OUTPUT.PUT_lINE('Error while creating a new policeman');	
+	
+END;
+/
+
+
+CREATE OR REPLACE PROCEDURE insert_vehicule_type(
+	vehicule_type IN vehicule_type.type%TYPE,
+	id_created OUT vehicule_type.id%TYPE 
+	)
+AS
+BEGIN
+	INSERT INTO vehicule_type(type) 
+	VALUES (vehicule_type) 
+	RETURNING vehicule_type.id INTO id_created ;
+	COMMIT;
+	EXCEPTION 
+		WHEN OTHERS THEN 
+			DBMS_OUTPUT.PUT_lINE('Error while creating a new vehicule type');	
+	
+END;
+/
+
+CREATE OR REPLACE PROCEDURE delete_vehicule_type(
+	vehicule_id IN vehicule_type.id%TYPE,
+	success OUT NUMBER
+	)
+AS	
+BEGIN
+	success  := 1;
+
+	DELETE from vehicule_type WHERE
+	id=vehicule_id;
+	COMMIT;
+	EXCEPTION 
+		WHEN OTHERS THEN 
+			DBMS_OUTPUT.PUT_lINE('Error while delete vehicule type');
+			success  := 0;
+END;
+/
+
+
+
+CREATE OR REPLACE PROCEDURE update_vehicule_type(
+	vehicule_id IN vehicule_type.id%TYPE,
+	vehicule_type IN vehicule_type.type%TYPE,
+	forException OUT collector.police_area_id%TYPE 
+	)
+AS	
+BEGIN
+	forException := 0;
+	UPDATE vehicule_type SET
+	type=vehicule_type
+	WHERE id = vehicule_id;
+	COMMIT;
+	EXCEPTION 
+		WHEN OTHERS THEN 
+			DBMS_OUTPUT.PUT_lINE('Error while updating vehicule type');
+			forException := SQLCODE;
+END;
+/
+
+
+CREATE OR REPLACE PROCEDURE insert_infraction_type(
+	type IN infraction.infraction_type%TYPE,
+	price IN infraction.amount%TYPE,
+	id_created OUT vehicule_type.id%TYPE 
+	)
+AS
+BEGIN
+	INSERT INTO infraction(infraction_type, amount) 
+	VALUES (type, price) 
+	RETURNING infraction_id INTO id_created ;
+	COMMIT;
+	EXCEPTION 
+		WHEN OTHERS THEN 
+			DBMS_OUTPUT.PUT_lINE('Error while creating a new infraction type');	
+	
+END;
+/
+
+CREATE OR REPLACE PROCEDURE delete_infraction_type(
+	id IN infraction.infraction_id%TYPE,
+	success OUT NUMBER
+	)
+AS	
+BEGIN
+	success  := 1;
+
+	DELETE from infraction WHERE
+	infraction_id=id;
+	COMMIT;
+	EXCEPTION 
+		WHEN OTHERS THEN 
+			DBMS_OUTPUT.PUT_lINE('Error while delete infraction type');
+			success  := 0;
+END;
+/
+
+CREATE OR REPLACE PROCEDURE update_infraction_type(
+	id IN infraction.infraction_id%TYPE,
+	type IN infraction.infraction_type%TYPE,
+	price IN infraction.amount%TYPE,
+	forException OUT collector.police_area_id%TYPE 
+	)
+AS	
+BEGIN
+	forException := 0;
+	UPDATE infraction SET
+	infraction_type=type, amount=price
+	WHERE infraction_id = id;
+	COMMIT;
+	EXCEPTION 
+		WHEN OTHERS THEN 
+			DBMS_OUTPUT.PUT_lINE('Error while updating infraction type');
+			forException := SQLCODE;
+END;
+/
+
+
+CREATE OR REPLACE PROCEDURE insert_fine(
+	infractionId IN fine.infraction_id%TYPE,
+	vehiculeId IN fine.vehiculetype_id%TYPE,
+	firstname IN fine.civilian_firstname%TYPE,
+	lastname IN fine.civilian_lastname%TYPE,
+	comment IN fine.fine_comment%TYPE,
+	plate IN fine.licensePlate%TYPE,
+	policemanId IN fine.policeman_serialNumber%TYPE,
+	datetime IN fine.fine_timestamp%TYPE,
+	price IN fine.total_price%TYPE,
+	id_created OUT fine.fine_id%TYPE 
+	)
+AS
+BEGIN
+	INSERT INTO fine(infraction_id, vehiculetype_id,civilian_firstname, civilian_lastname,fine_comment, licenseplate, policeman_serialNumber,fine_timestamp,total_price, fine_status) 
+	VALUES (infractionId, vehiculeId, firstname ,lastname, comment, plate, policemanId, datetime, price, 'waitingForValidation') 
+	RETURNING fine_id INTO id_created ;
+	COMMIT;
+	EXCEPTION 
+		WHEN OTHERS THEN 
+			DBMS_OUTPUT.PUT_lINE('Error while creating a new fine');	
+	
+END;
+/
+
+
+
+CREATE OR REPLACE PROCEDURE update_fine_status(
+	id IN fine.fine_id%type,
+	status IN fine.fine_status%type,
+	code OUT NUMBER)
+IS
+	return_number number;
+	
+BEGIN
+	code :=0;
+	UPDATE fine
+	SET fine_status= status
+	WHERE fine_id = id;
+	return_number :=sql%rowcount;
+
+if(return_number<1)
+	then code :=-1;
+	DBMS_OUTPUT.PUT_LINE('Pas de update');
+
+else
+	DBMS_OUTPUT.PUT_LINE('Update OK');
+	commit;
+
+end if;
+EXCEPTION
+ WHEN OTHERS THEN
+	code :=  SQLCODE;
+end;
+/
+
+CREATE OR REPLACE PROCEDURE delete_fine(
+	id IN fine.fine_id%TYPE,
+	success OUT NUMBER
+	)
+AS	
+BEGIN
+	success  := 1;
+
+	DELETE from fine WHERE
+	fine_id=id;
+	COMMIT;
+	EXCEPTION 
+		WHEN OTHERS THEN 
+			DBMS_OUTPUT.PUT_lINE('Error while delete fine');
+			success  := 0;
+END;
+/
+
+
+
+
+DECLARE
+    test VARCHAR2(50);
+BEGIN
+    insert_collector('insert', 'insert', 'test', '1', test);
+    dbms_output.put_line(test );
+END;
+
+DECLARE
+    amount NUMBER;
+BEGIN
+    update_collector('CO000001','Sarah','Croche', 'test',1,amount );
+    dbms_output.put_line(amount);
+END;
+
+UPDATE collector SET
+		collector_firstname='Sarah',
+		collector_lastname='Chete',
+		password='test3',
+		police_area_id=1
+		WHERE collector_serialNumber = 'CO000001';

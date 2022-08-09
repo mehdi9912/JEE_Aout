@@ -20,14 +20,9 @@
   	<param-name>apiUrl</param-name>
   	<param-value>http://localhost:8888/JEE_API/api</param-value>
   </context-param>
-  <context-param>
-  	<param-name>adminMail</param-name>
-  	<param-value>admin@gmail.com</param-value>
-  </context-param>
-  
   <!-- OTHER -->
 	<session-config>
-		<session-timeout>100</session-timeout>
+		<session-timeout>500</session-timeout>
 	</session-config>
 	<error-page>
 		<exception-type>java.lang.Exception</exception-type>
@@ -39,7 +34,7 @@
   <env-entry> 
     <env-entry-name>apiUrl</env-entry-name>
     <env-entry-type>java.lang.String</env-entry-type>
-    <env-entry-value>http://localhost:8888/JEE_api/api</env-entry-value> 
+    <env-entry-value>http://localhost:8888/JEE_API/api</env-entry-value> 
  </env-entry>
   <!-- SERVLETS -->
   <servlet>
@@ -50,25 +45,185 @@
   	<servlet-name>Logout</servlet-name>
   	<servlet-class>be.project.servlets.LogoutServlet</servlet-class>
   </servlet>
+  <servlet>
+  	<servlet-name>HomeAdmin</servlet-name>
+  	<servlet-class>be.project.servlets.HomeAdmin</servlet-class>
+  </servlet>
+  <servlet>
+  	<servlet-name>HomeCollector</servlet-name>
+  	<servlet-class>be.project.servlets.HomeCollector</servlet-class>
+  </servlet>
+  <servlet>
+  	<servlet-name>HomePoliceman</servlet-name>
+  	<servlet-class>be.project.servlets.HomePoliceman</servlet-class>
+  </servlet>
+  <servlet>
+  	<servlet-name>HomeChief</servlet-name>
+  	<servlet-class>be.project.servlets.HomeChief</servlet-class>
+  </servlet>
+  <servlet>
+  	<servlet-name>ListingUsers</servlet-name>
+  	<servlet-class>be.project.servlets.ListingUsers</servlet-class>
+  </servlet>
+  <servlet>
+  	<servlet-name>ManageUsers</servlet-name>
+  	<servlet-class>be.project.servlets.ManageUsers</servlet-class>
+  </servlet>
+   <servlet>
+  	<servlet-name>ListingInfractionsTypes</servlet-name>
+  	<servlet-class>be.project.servlets.ListingInfractionsTypes</servlet-class>
+  </servlet>
+  <servlet>
+  	<servlet-name>ManageInfractionsTypes</servlet-name>
+  	<servlet-class>be.project.servlets.ManageInfractionsTypes</servlet-class>
+  </servlet>
+   <servlet>
+  	<servlet-name>ListingVehiculesTypes</servlet-name>
+  	<servlet-class>be.project.servlets.ListingVehiculesTypes</servlet-class>
+  </servlet>
+   <servlet>
+  	<servlet-name>ManageVehiculesTypes</servlet-name>
+  	<servlet-class>be.project.servlets.ManageVehiculesTypes</servlet-class>
+  </servlet>
+  <servlet>
+  	<servlet-name>CreateFine</servlet-name>
+  	<servlet-class>be.project.servlets.CreateFine</servlet-class>
+  </servlet>
+   <servlet>
+  	<servlet-name>FineDetails</servlet-name>
+  	<servlet-class>be.project.servlets.FineDetails</servlet-class>
+  </servlet>
+  
   
   <!-- MAPPING SERVLET -->
   <servlet-mapping>
   	<servlet-name>Authentication</servlet-name>
 	  	<url-pattern>/connexion</url-pattern>
 	  	<url-pattern>/authentication</url-pattern>
+	  	<url-pattern>/login</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
 	 <servlet-name>Logout</servlet-name>
+  		<url-pattern>/deconnexion</url-pattern>
   		<url-pattern>/logout</url-pattern>
   </servlet-mapping>
+   <servlet-mapping>
+	 <servlet-name>HomeAdmin</servlet-name>
+  		<url-pattern>/admin</url-pattern>
+  </servlet-mapping>
+   <servlet-mapping>
+	 <servlet-name>HomeCollector</servlet-name>
+  		<url-pattern>/collector</url-pattern>
+  </servlet-mapping>
+   <servlet-mapping>
+	 <servlet-name>HomePoliceman</servlet-name>
+  		<url-pattern>/policeman</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+	 <servlet-name>HomeChief</servlet-name>
+  		<url-pattern>/chief</url-pattern>
+  </servlet-mapping>
+   <servlet-mapping>
+	 <servlet-name>ListingUsers</servlet-name>
+  		<url-pattern>/users</url-pattern>
+  </servlet-mapping>
+    <servlet-mapping>
+	 <servlet-name>ManageUsers</servlet-name>
+  		<url-pattern>/modifyuser</url-pattern>
+  		<url-pattern>/deleteuser</url-pattern>
+  		<url-pattern>/adduser</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+	 <servlet-name>ListingInfractionsTypes</servlet-name>
+  		<url-pattern>/infractions</url-pattern>
+  </servlet-mapping>
+   <servlet-mapping>
+	 <servlet-name>ManageInfractionsTypes</servlet-name>
+  		<url-pattern>/modifyinfraction</url-pattern>
+  		<url-pattern>/deleteinfraction</url-pattern>
+  		<url-pattern>/addinfraction</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+	 <servlet-name>ListingVehiculesTypes</servlet-name>
+  		<url-pattern>/vehicules</url-pattern>
+  </servlet-mapping>
+   <servlet-mapping>
+	 <servlet-name>ManageVehiculesTypes</servlet-name>
+  		<url-pattern>/modifyvehicule</url-pattern>
+  		<url-pattern>/deletevehicule</url-pattern>
+  		<url-pattern>/addvehicule</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+	 <servlet-name>CreateFine</servlet-name>
+  		<url-pattern>/createfine</url-pattern>
+  		<url-pattern>/addfine</url-pattern>
+  		<url-pattern>/addfineinsurance</url-pattern>
+  </servlet-mapping>
+    <servlet-mapping>
+	 <servlet-name>FineDetails</servlet-name>
+  		<url-pattern>/fine</url-pattern>
+  </servlet-mapping>
 	 
-	  <!--FILTERS
+	  <!-- FILTERS -->
    <filter>
 		<filter-name>AuthenticationFilter</filter-name>
 		<filter-class>be.project.filters.AuthenticationFilter</filter-class>
 	</filter>
+	<filter>
+		<filter-name>AdminAccessFilter</filter-name>
+		<filter-class>be.project.filters.AdminAccessFilter</filter-class>
+	</filter>
+	<filter>
+		<filter-name>CollectorAccessFilter</filter-name>
+		<filter-class>be.project.filters.CollectorAccessFilter</filter-class>
+	</filter>
+	<filter>
+		<filter-name>PolicemanAccessFilter</filter-name>
+		<filter-class>be.project.filters.PolicemanAccessFilter</filter-class>
+	</filter>
+	<filter>
+		<filter-name>ChiefAccessFilter</filter-name>
+		<filter-class>be.project.filters.ChiefAccessFilter</filter-class>
+	</filter>
 	<filter-mapping>
 		<filter-name>AuthenticationFilter</filter-name>
-			<servlet-name>test</servlet-name>
-	</filter-mapping>-->
+			<servlet-name>HomeAdmin</servlet-name>
+			<servlet-name>HomeCollector</servlet-name>
+			<servlet-name>HomePoliceman</servlet-name>
+			<servlet-name>HomeChief</servlet-name>
+			<servlet-name>ListingUsers</servlet-name>
+			<servlet-name>ManageUsers</servlet-name>
+			<servlet-name>ListingInfractionsTypes</servlet-name>
+			<servlet-name>ManageInfractionsTypes</servlet-name>
+			<servlet-name>ListingVehiculesTypes</servlet-name>
+			<servlet-name>ManageVehiculesTypes</servlet-name>
+			<servlet-name>CreateFine</servlet-name>
+			<servlet-name>FineDetails</servlet-name>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>AdminAccessFilter</filter-name>
+			<servlet-name>HomeAdmin</servlet-name>
+			<servlet-name>ListingUsers</servlet-name>
+			<servlet-name>ManageUsers</servlet-name>
+			<servlet-name>ListingInfractionsTypes</servlet-name>
+			<servlet-name>ManageInfractionsTypes</servlet-name>
+			<servlet-name>ListingVehiculesTypes</servlet-name>
+			<servlet-name>ManageVehiculesTypes</servlet-name>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>CollectorAccessFilter</filter-name>
+			<servlet-name>HomeCollector</servlet-name>
+			<servlet-name>FineDetails</servlet-name>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>PolicemanAccessFilter</filter-name>
+			<servlet-name>HomePoliceman</servlet-name>
+			<servlet-name>CreateFine</servlet-name>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>ChiefAccessFilter</filter-name>
+			<servlet-name>HomeChief</servlet-name>
+			<servlet-name>FineDetails</servlet-name>
+			<servlet-name>ListingInfractionsTypes</servlet-name>
+	</filter-mapping> 
 </web-app>

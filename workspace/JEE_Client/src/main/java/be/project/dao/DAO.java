@@ -9,11 +9,11 @@ import javax.naming.NamingException;
 public interface DAO<T> {
 	public boolean insert(T obj);
 	
-	public boolean delete(T obj);
+	public boolean delete(String id);
 	
 	public boolean update(T obj);
 	
-	public T find(int id);
+	public T find(String id);
 	
 	public ArrayList<T> findAll();
 	

@@ -1,0 +1,204 @@
+
+/*********SUPPRESSION DES TABLES AVANT CREATION*********/
+DROP TABLE collector;
+DROP TABLE admin;
+DROP TABLE fine;
+DROP TABLE infraction;
+DROP TABLE vehicule_type;
+DROP TABLE insurance;
+DROP TABLE policeman;
+DROP TABLE chief;
+DROP TABLE police_area;
+
+
+
+/*********SUPPRESSION DES SEQUENCES AVANT CREATION*********/
+
+DROP SEQUENCE police_area_sequence;
+DROP SEQUENCE collector_sequence;
+DROP SEQUENCE chief_sequence;
+DROP SEQUENCE policeman_sequence;
+DROP SEQUENCE infraction_sequence;
+DROP SEQUENCE vehicule_type_sequence;
+DROP SEQUENCE fine_sequence;
+
+/*********CREATION DES TABLES*********/
+
+CREATE TABLE admin(
+  serialNumber VARCHAR2(20) CONSTRAINT pk_admin PRIMARY KEY,
+  firstname VARCHAR2(50) NOT NULL,
+  lastname VARCHAR2(50) NOT NULL,
+  password VARCHAR2(120) NOT NULL
+);
+
+CREATE TABLE police_area(
+  id NUMBER(5) CONSTRAINT pk_police_area PRIMARY KEY,
+  name VARCHAR2(50) NOT NULL
+);
+
+CREATE TABLE collector(
+  collector_serialNumber VARCHAR2(20) CONSTRAINT pk_collector PRIMARY KEY,
+  collector_firstname VARCHAR2(50) NOT NULL,
+  collector_lastname VARCHAR2(50) NOT NULL,
+  password VARCHAR2(40) NOT NULL,
+  police_area_id NUMBER(5) NOT NULL CONSTRAINT fk_police_area_collector REFERENCES police_area(id)
+);
+
+CREATE TABLE chief(
+  chief_serialNumber VARCHAR2(20) CONSTRAINT pk_chief PRIMARY KEY,
+  chief_firstname VARCHAR2(50) NOT NULL,
+  chief_lastname VARCHAR2(50) NOT NULL,
+  password VARCHAR2(40) NOT NULL,
+  police_area_id NUMBER(5) NOT NULL CONSTRAINT fk_police_area_chief REFERENCES police_area(id)
+);
+
+CREATE TABLE policeman(
+  policeman_serialNumber VARCHAR2(20) CONSTRAINT pk_policeman PRIMARY KEY,
+  policeman_firstname VARCHAR2(50) NOT NULL,
+  policeman_lastname VARCHAR2(50) NOT NULL,
+  password VARCHAR2(40) NOT NULL,
+  chief_serialNumber VARCHAR2(20) NOT NULL CONSTRAINT fk_chief_policeman REFERENCES chief(chief_serialNumber),
+  police_area_id NUMBER(5) NOT NULL CONSTRAINT fk_police_area_policeman REFERENCES police_area(id)
+);
+
+
+CREATE TABLE infraction(
+  infraction_id NUMBER(5) CONSTRAINT pk_infraction PRIMARY KEY,
+  infraction_type VARCHAR2(50) NOT NULL,
+  amount number(5,2) NOT NULL
+);
+
+CREATE TABLE vehicule_type(
+  id NUMBER(5) CONSTRAINT pk_vehicule_type PRIMARY KEY,
+  type VARCHAR2(50) NOT NULL
+);
+
+CREATE TABLE insurance(
+  licensePlate VARCHAR2(12) CONSTRAINT pk_insurance PRIMARY KEY,
+  in_order CHAR(1) NOT NULL
+);
+
+CREATE TABLE fine(
+  fine_id NUMBER(5) CONSTRAINT pk_fine PRIMARY KEY,
+  fine_timestamp TIMESTAMP NOT NULL,
+  total_price number(5,2) NOT NULL,
+  civilian_firstname VARCHAR2(50),
+  civilian_lastname VARCHAR2(50),
+  fine_comment VARCHAR2(500) NOT NULL,
+  fine_status VARCHAR2(50) NOT NULL,
+  licensePlate VARCHAR2(12),
+  vehiculeType_id NUMBER(5) NOT NULL CONSTRAINT fk_vehicule_type_fine REFERENCES vehicule_type(id),
+  infraction_id NUMBER(5) NOT NULL CONSTRAINT fk_infraction_fine REFERENCES infraction(infraction_id),
+  policeman_serialNumber VARCHAR2(20) NOT NULL CONSTRAINT fk_policeman_fine REFERENCES policeman(policeman_serialNumber),
+  CONSTRAINT check_fine_status CHECK (fine_status IN ('waitingForValidation','validated','sent'))
+);
+
+
+
+/*********SEQUENCES*********/
+
+CREATE SEQUENCE police_area_sequence
+INCREMENT BY 1
+START WITH 1
+NOCACHE;
+
+CREATE SEQUENCE collector_sequence
+INCREMENT BY 1
+START WITH 1
+NOCACHE;
+
+CREATE SEQUENCE chief_sequence
+INCREMENT BY 1
+START WITH 1
+NOCACHE;
+
+CREATE SEQUENCE policeman_sequence
+INCREMENT BY 1
+START WITH 1
+NOCACHE;
+
+CREATE SEQUENCE infraction_sequence
+INCREMENT BY 1
+START WITH 1
+NOCACHE;
+
+CREATE SEQUENCE vehicule_type_sequence
+INCREMENT BY 1
+START WITH 1
+NOCACHE;
+
+CREATE SEQUENCE fine_sequence
+INCREMENT BY 1
+START WITH 1
+NOCACHE;
+
+
+/*********TRIGGERS*********/
+
+CREATE OR REPLACE TRIGGER police_area_on_insert
+  BEFORE INSERT ON police_area
+  FOR EACH ROW
+BEGIN
+  SELECT police_area_sequence.nextval
+  INTO :new.id
+  FROM dual;
+END;
+/
+CREATE OR REPLACE TRIGGER collector_on_insert
+  BEFORE INSERT ON collector
+  FOR EACH ROW
+BEGIN
+  SELECT 'CO' || TO_CHAR(collector_sequence.nextval, 'FM000000') 
+  INTO :NEW.collector_serialNumber
+  FROM DUAL;
+END;
+/
+CREATE OR REPLACE TRIGGER chief_on_insert
+  BEFORE INSERT ON chief
+  FOR EACH ROW
+BEGIN
+  SELECT 'CH' || TO_CHAR(chief_sequence.nextval, 'FM000000') 
+  INTO :NEW.chief_serialNumber
+  FROM DUAL;
+END;
+/
+CREATE OR REPLACE TRIGGER policeman_on_insert
+  BEFORE INSERT ON policeman
+  FOR EACH ROW
+BEGIN
+  SELECT 'PO' || TO_CHAR(policeman_sequence.nextval, 'FM000000') 
+  INTO :NEW.policeman_serialNumber
+  FROM DUAL;
+END;
+/
+
+CREATE OR REPLACE TRIGGER infraction_on_insert
+  BEFORE INSERT ON infraction
+  FOR EACH ROW
+BEGIN
+  SELECT infraction_sequence.nextval
+  INTO :new.infraction_id
+  FROM dual;
+END;
+/
+CREATE OR REPLACE TRIGGER vehicule_type_on_insert
+  BEFORE INSERT ON vehicule_type
+  FOR EACH ROW
+BEGIN
+  SELECT vehicule_type_sequence.nextval
+  INTO :new.id
+  FROM dual;
+END;
+/
+CREATE OR REPLACE TRIGGER fine_on_insert
+  BEFORE INSERT ON fine
+  FOR EACH ROW
+BEGIN
+  SELECT fine_sequence.nextval
+  INTO :new.fine_id
+  FROM dual;
+END;
+/
+
+
+

@@ -1,0 +1,28 @@
+@charset "ISO-8859-1";
+
+*{
+	margin : 0;
+	padding : 0;
+	box-sizing: border-box;
+}
+
+th,td{text-align: center;}
+
+td, td > a{
+	vertical-align: middle;
+    text-decoration: none;
+}
+
+.btn-red{
+	border-radius: 3px;
+    border : 1px solid #ffffff;
+
+    background: #9b1203;
+
+	color: #ffffff;
+	font-family:  Helvetica, Verdana, serif;
+	font-weight: bold;
+	font-size: 14px;
+	text-align: center;
+    align-self: center;
+}
